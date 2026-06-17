@@ -1,0 +1,227 @@
+<%- include('../partials/app-header') %>
+
+    <div class="d-flex app-layout">
+        <%- include('../partials/sidebar') %>
+
+            <div class="app-content">
+                <div class="container-fluid">
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                Hello, <%= user.name || user.email %>
+                            </h3>
+                            <p class="text-muted">Welcome back to your dashboard.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- Weather Section -->
+                    <div class="weather-section">
+                    <% if (weather) { %>
+                        <div class="weather-card">
+                            <div class="weather-header">
+                                <div>
+                                    <p class="city"><%= weather.city %></p>
+                                    <p class="condition"><%= weather.condition %></p>
+                                </div>
+                                <img src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png" alt="weather icon"
+                                    class="weather-icon">
+                            </div>
+                            <div class="weather-body">
+                                <p class="temp"><%= weather.temp %>°C</p>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="weather-card unavailable">
+                            <div class="weather-body">
+                                <p class="city">Weather unavailable</p>
+                                <p class="condition">Could not load forecast right now.</p>
+                            </div>
+                        </div>
+                    <% } %>
+                    </div>
+
+                    <!-- Budget Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-bg-success shadow-sm">
+                                <div class="card-body">
+                                    <h6>Total Income</h6>
+                                    <h4>
+                                        <%= totalIncome %>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card text-bg-danger shadow-sm">
+                                <div class="card-body">
+                                    <h6>Total Expense</h6>
+                                    <h4>
+                                        <%= totalExpense %>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card text-bg-dark shadow-sm">
+                                <div class="card-body">
+                                    <h6>Balance</h6>
+                                    <h4>
+                                        <%= balance %>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="mb-4">
+                        <button class="btn btn-success me-2" onclick="toggleIncome()">+ Add Income</button>
+                        <button class="btn btn-danger" onclick="toggleExpense()">+ Add Expense</button>
+                    </div>
+
+
+                    <div id="incomeForm" class="card shadow-sm mb-4 d-none">
+                        <div class="card-body">
+                            <h5>Add Income</h5>
+                            <form method="POST" action="/add-income">
+                                <div class="mb-3">
+                                    <input type="number" name="amount" class="form-control" placeholder="Enter amount"
+                                        required>
+                                    <input type="text" name="category" class="form-control mb-2"
+                                        placeholder="Category (e.g. Salary)">
+                                    <input type="text" name="description" class="form-control mb-2"
+                                        placeholder="Description">
+                                </div>
+                                <button class="btn btn-success">Save Income</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div id="expenseForm" class="card shadow-sm mb-4 d-none">
+                        <div class="card-body">
+                            <h5>Add Expense</h5>
+                            <form method="POST" action="/add-expense">
+                                <div class="mb-3">
+                                    <input type="number" name="amount" class="form-control" placeholder="Enter amount"
+                                        required>
+                                    <input type="text" name="category" class="form-control mb-2"
+                                        placeholder="Category (e.g. Food)">
+                                    <input type="text" name="description" class="form-control mb-2"
+                                        placeholder="Description">
+                                </div>
+                                <button class="btn btn-danger">Save Expense</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5>Transaction History</h5>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% transactions.forEach(t=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= new Date(t.created_at).toLocaleDateString() %>
+                                            </td>
+                                            <td>
+                                                <%= t.type %>
+                                            </td>
+                                            <td>
+                                                <%= t.category %>
+                                            </td>
+                                            <td>
+                                                <%= t.description %>
+                                            </td>
+                                            <td>Rs <%= t.amount %>
+                                            </td>
+                                            <td>
+                                                <form class="table-action-form" action="/delete-transaction/<%=t.id%>" method="POST">
+                                                    <button >Delete</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <button onclick="openEditModal(
+'<%= t.id %>',
+'<%= t.amount %>',
+'<%= t.category %>',
+'<%= t.description %>'
+)">
+                                                    Edit
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <form method="GET" action="/dashboard" class="mb-3">
+                        <select name="month" class="form-select w-auto d-inline">
+                            <option value="">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+
+                        <button class="btn btn-primary">Filter</button>
+                    </form>
+
+                </div>
+            </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+
+        <div class="modal-box">
+
+            <h3>Edit Transaction</h3>
+
+            <form id="editForm" method="POST">
+
+                <label class="form-label">Amount</label>
+                <input type="number" name="amount" id="editAmount" class="form-control mb-3" required>
+
+                <label class="form-label">Category</label>
+                <input type="text" name="category" id="editCategory" class="form-control mb-3" required>
+
+                <label class="form-label">Description</label>
+                <input type="text" name="description" id="editDescription" class="form-control mb-3">
+
+                <button type="submit" class="btn btn-primary me-2">Update</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

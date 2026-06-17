@@ -1,0 +1,529 @@
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
+
+:root {
+  --color-primary: #4f46e5;
+  --color-primary-dark: #4338ca;
+  --color-primary-soft: rgba(79, 70, 229, 0.1);
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --radius: 12px;
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --font: "Inter", system-ui, sans-serif;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+body {
+  background-color: var(--color-bg);
+  font-family: var(--font);
+  color: var(--color-text);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+/* ==========================================================================
+   App shell (dashboard)
+   ========================================================================== */
+
+.app-topbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+}
+
+.app-topbar .btn-outline-primary {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.app-topbar .btn-outline-primary:hover {
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.app-layout {
+  min-height: calc(100vh - 57px);
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+.sidebar {
+  width: var(--sidebar-width);
+  min-height: calc(100vh - 57px);
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sidebar-brand-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-link:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.sidebar-link.active {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.sidebar-icon {
+  flex-shrink: 0;
+}
+
+.sidebar-text {
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .sidebar-link,
+.sidebar.collapsed .sidebar-signout {
+  justify-content: center;
+  gap: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar.collapsed .sidebar-nav {
+  align-items: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.sidebar.collapsed .sidebar-link {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+}
+
+.sidebar.collapsed .sidebar-brand {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: var(--color-bg);
+}
+
+.sidebar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.sidebar-user-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-email {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.collapsed .sidebar-user-info {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-user {
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.sidebar-logout-form {
+  margin: 0;
+}
+
+.sidebar-signout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.sidebar-signout:hover {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+  color: var(--color-danger);
+}
+
+/* ==========================================================================
+   Auth pages (login / register)
+   ========================================================================== */
+
+body:not(.app-body) form:not(#editForm) {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+body:not(.app-body) form:not(#editForm) h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+body:not(.app-body) form:not(#editForm) .btn {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+body:not(.app-body) form:not(#editForm) svg {
+  display: block;
+  margin: 0 auto 20px auto;
+  color: var(--color-primary);
+}
+
+.form-floating input {
+  height: 50px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+}
+
+.social-block {
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.social-block .btn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.social-block .btn:hover {
+  background-color: var(--color-bg);
+  border-color: var(--color-muted);
+}
+
+body:not(.app-body) .alert-danger {
+  max-width: 400px;
+  margin: 15px auto 0 auto;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Dashboard components
+   ========================================================================== */
+
+#editModal,
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-box {
+  background: var(--color-surface);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  margin: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+.table-action-form {
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  max-width: none;
+}
+
+.weather-section {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.weather-card {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.weather-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s;
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.city {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.weather-icon {
+  width: 56px;
+  height: 56px;
+}
+
+.weather-body {
+  text-align: right;
+  margin-top: 0;
+}
+
+.temp {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.condition {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.weather-card.unavailable {
+  opacity: 0.85;
+  justify-content: center;
+  text-align: center;
+}
+
+.weather-card.unavailable .weather-body {
+  text-align: center;
+}
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Landing page
+   ========================================================================== */
+
+body.landing-page {
+  background-color: var(--color-bg);
+}
+
+.hero-section {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-section .text-muted {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.hero-section .btn-outline-secondary {
+  background: white;
+  border-color: white;
+  color: var(--color-text);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 57px;
+    z-index: 1000;
+    height: calc(100vh - 57px);
+    box-shadow: var(--shadow-md);
+    transform: translateX(0);
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+    width: var(--sidebar-width);
+  }
+
+  .app-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  body:not(.app-body) form:not(#editForm),
+  .social-block,
+  body:not(.app-body) .alert-danger {
+    margin: 20px 10px;
+  }
+
+  .weather-card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .weather-body {
+    text-align: left;
+    width: 100%;
+  }
+}
