@@ -12,7 +12,9 @@ function ensureAuthenticated(req, res, next) {
 router.get("/dashboard", ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user.id;
-    const month = req.query.month;
+    const month = req.query.month || "";
+    const yearQuery = req.query.year;
+    const filterSubmitted = "month" in req.query || "year" in req.query;
 
     let query = `
       SELECT * FROM transactions
@@ -21,15 +23,33 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
 
     let values = [userId];
 
-    if (month) {
+    if (month && yearQuery) {
+      query += ` AND EXTRACT(MONTH FROM created_at) = $2 AND EXTRACT(YEAR FROM created_at) = $3`;
+      values.push(month, Number(yearQuery));
+    } else if (month) {
       query += ` AND EXTRACT(MONTH FROM created_at) = $2`;
       values.push(month);
+    } else if (yearQuery) {
+      query += ` AND EXTRACT(YEAR FROM created_at) = $2`;
+      values.push(Number(yearQuery));
     }
 
     query += ` ORDER BY created_at DESC`;
 
     const result = await pool.query(query, values);
-    const transactions = result.rows;
+    const transactions = result.rows; //filtered transactions (existed)
+    const allTime = await pool.query(
+      'SELECT type, SUM(amount) as total FROM transactions WHERE user_id=$1 GROUP BY type', 
+      [userId]); //All time totals
+
+    let totalIncomeAllTime = 0;
+    let totalExpenseAllTime = 0;
+
+    allTime.rows.forEach(t => {
+      if (t.type === "income") totalIncomeAllTime += Number(t.total);
+      if (t.type === "expense") totalExpenseAllTime += Number(t.total);
+    });
+    let balanceAllTime = totalIncomeAllTime-totalExpenseAllTime;
 
     let totalIncome = 0;
     let totalExpense = 0;
@@ -40,6 +60,22 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
     });
 
     const balance = totalIncome - totalExpense;
+    const isFiltered = filterSubmitted && Boolean(month || yearQuery);
+    const filterType = month && yearQuery ? "month-year" : month ? "month" : yearQuery ? "year" : "all";
+
+    const monthNames = [
+      "", "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
+    ];
+    let periodLabel = "(All time)";
+    if (filterType === "month-year") {
+      periodLabel = `(${monthNames[Number(month)]} ${Number(yearQuery)})`;
+    } else if (filterType === "year") {
+      periodLabel = `(${Number(yearQuery)})`;
+    } else if (filterType === "month") {
+      periodLabel = `(${monthNames[Number(month)]})`;
+    }
+
     let weather = null;
     try {
       const weatherRes = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Karachi&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`);
@@ -60,13 +96,24 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
       totalExpense,
       balance,
       weather,
-      activePage: "dashboard"
+      activePage: "dashboard",
+      flash: req.query.msg || null,
+      selectedMonth: month,
+      selectedYear: yearQuery ? Number(yearQuery) : "",
+      isFiltered,
+      filterType,
+      periodLabel,
+      filterSubmitted,
+      totalExpenseAllTime,
+      totalIncomeAllTime,
+      balanceAllTime,
     });
 
   } catch (err) {
     console.error(err);
     res.send("Error loading dashboard");
   }
+  
 });
 
 router.post("/add-income", ensureAuthenticated, async (req, res) => {
@@ -84,11 +131,11 @@ router.post("/add-income", ensureAuthenticated, async (req, res) => {
       [userId, "income", category, description, amount]
     );
 
-    res.redirect("/dashboard");
+    res.redirect("/dashboard?msg=added");
 
   } catch (err) {
     console.error(err);
-    res.send("Error adding income");
+    res.redirect("/dashboard?msg=error");
   }
 });
 
@@ -107,11 +154,11 @@ router.post("/add-expense", ensureAuthenticated, async (req, res) => {
       "INSERT INTO transactions (user_id, type, category, description, amount) VALUES ($1, $2, $3, $4, $5)",
       [userId, "expense", category, description, amount]);
 
-    res.redirect("/dashboard");
+    res.redirect("/dashboard?msg=added");
 
   } catch (err) {
     console.error(err);
-    res.send("Error adding expense");
+    res.redirect("/dashboard?msg=error");
   }
 });
 
@@ -127,11 +174,11 @@ router.post("/delete-transaction/:id", ensureAuthenticated, async (req, res) => 
       [transactionId, userId]
     );
 
-    res.redirect("/dashboard");
+    res.redirect("/dashboard?msg=deleted");
 
   } catch (err) {
     console.error(err);
-    res.send("Error deleting transaction");
+    res.redirect("/dashboard?msg=error");
   }
 });
 
@@ -153,10 +200,10 @@ router.post("/edit-transaction/:id", ensureAuthenticated, async (req, res) => {
       [amount, category?.trim(), description?.trim(), transactionId, userId]
     );
 
-    res.redirect("/dashboard");
+    res.redirect("/dashboard?msg=updated");
   }catch (err){
     console.error(err);
-    res.send("Error updating transaction");
+    res.redirect("/dashboard?msg=error");
   }
 });
 

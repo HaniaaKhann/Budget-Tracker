@@ -35,6 +35,10 @@ body {
   border-color: var(--color-primary);
 }
 
+.table .btn-sm {
+  white-space: nowrap;
+}
+
 .btn-primary:hover,
 .btn-primary:focus {
   background-color: var(--color-primary-dark);
@@ -452,6 +456,20 @@ body:not(.app-body) .alert-danger {
 
 .google-icon {
   flex-shrink: 0;
+}
+
+.summary-card{
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+}
+.summary-income {border-left-color: var(--color-success);}
+.summary-expense{border-left-color: var(--color-danger);}
+.summary-balance{border-left-color: var(--color-primary);}
+
+.summary-card small.text-muted {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
 }
 
 /* ==========================================================================
