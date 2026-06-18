@@ -472,6 +472,30 @@ body:not(.app-body) .alert-danger {
   font-size: 0.8rem;
 }
 
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.chart-wrap-pie {
+  height: 280px;
+  max-height: 320px;
+}
+
+.chart-wrap-line {
+  height: 320px;
+  max-height: 360px;
+}
+
+.pagination-bar {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.profile-form {
+  max-width: 520px;
+}
+
 /* ==========================================================================
    Landing page
    ========================================================================== */

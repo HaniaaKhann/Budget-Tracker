@@ -108,6 +108,41 @@
                     </div>
                 </div>
 
+                <div class="row mb-4 g-4">
+                    <div class="col-lg-5">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="mb-1">Spending by Category</h5>
+                                <p class="text-muted small mb-3">Filtered view <%= periodLabel %></p>
+                                <div class="chart-wrap chart-wrap-pie">
+                                    <canvas id="categoryChart"
+                                        data-labels='<%= JSON.stringify(categoryLabels) %>'
+                                        data-values='<%= JSON.stringify(categoryTotals) %>'>
+                                    </canvas>
+                                </div>
+                                <% if (categoryLabels.length === 0) { %>
+                                    <p class="text-muted text-center mb-0 mt-3">No expense data for this period.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="mb-1">Income vs Expense</h5>
+                                <p class="text-muted small mb-3">Last 12 months (all time)</p>
+                                <div class="chart-wrap chart-wrap-line">
+                                    <canvas id="trendChart"
+                                        data-labels='<%= JSON.stringify(chartLabels) %>'
+                                        data-income='<%= JSON.stringify(incomeData) %>'
+                                        data-expense='<%= JSON.stringify(expenseData) %>'>
+                                    </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <div class="mb-4">
                     <button class="btn btn-success me-2" onclick="toggleIncome()">+ Add Income</button>
@@ -257,6 +292,28 @@
                                 <%}%>
                         </tbody>
                         </table>
+
+                        <% if (totalRows > 0) { %>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pagination-bar">
+                            <span class="text-muted small">
+                                Showing page <%= page %> of <%= totalPages %> (<%= totalRows %> transactions)
+                            </span>
+                            <div class="d-flex gap-2">
+                                <% if (page > 1) { %>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="/dashboard?page=<%= page - 1 %>&month=<%= selectedMonth %>&year=<%= selectedYear %>&search=<%= encodeURIComponent(search || '') %>">
+                                        Previous
+                                    </a>
+                                <% } %>
+                                <% if (page < totalPages) { %>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="/dashboard?page=<%= page + 1 %>&month=<%= selectedMonth %>&year=<%= selectedYear %>&search=<%= encodeURIComponent(search || '') %>">
+                                        Next
+                                    </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -287,4 +344,6 @@
 
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <%- include('../partials/footer') %>

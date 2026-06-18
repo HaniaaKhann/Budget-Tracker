@@ -20,3 +20,6 @@ CREATE TABLE transactions (
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);
+
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS weather_city TEXT DEFAULT 'Karachi';
