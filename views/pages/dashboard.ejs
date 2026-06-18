@@ -113,8 +113,6 @@
                     <button class="btn btn-success me-2" onclick="toggleIncome()">+ Add Income</button>
                     <button class="btn btn-danger" onclick="toggleExpense()">+ Add Expense</button>
                 </div>
-
-
                 <div id="incomeForm" class="card shadow-sm mb-4 d-none">
                     <div class="card-body">
                         <h5>Add Income</h5>
@@ -122,8 +120,15 @@
                             <div class="mb-3">
                                 <input type="number" name="amount" class="form-control" placeholder="Enter amount"
                                     required>
-                                <input type="text" name="category" class="form-control mb-2"
-                                    placeholder="Category (e.g. Salary)">
+                                <select name="category" id="incomeCategory" class="form-control mb-2" onchange="toggleCustomCategory('income')">
+                                    <option value="">Select category</option>
+                                    <optgroup label="Income">
+                                        <option>Salary</option>
+                                        <option>Freelance</option>
+                                        <option value="__other__">Other Income</option>
+                                    </optgroup>
+                                    </select>
+                                    <input type="text" name="customCategory" id="incomeCustomCategory" class="form-control mb-2 d-none" placeholder="Enter custom category">
                                 <input type="text" name="description" class="form-control mb-2"
                                     placeholder="Description">
                             </div>
@@ -140,8 +145,18 @@
                             <div class="mb-3">
                                 <input type="number" name="amount" class="form-control" placeholder="Enter amount"
                                     required>
-                                <input type="text" name="category" class="form-control mb-2"
-                                    placeholder="Category (e.g. Food)">
+                                <select name="category" id="expenseCategory" class="form-control mb-2" onchange="toggleCustomCategory('expense')">
+                                    <option value="">Select category</option>
+                                    <optgroup label="Expense">
+                                        <option>Food</option>
+                                        <option>Transport</option>
+                                        <option>Rent</option>
+                                        <option>Utilities</option>
+                                        <option>Shopping</option>
+                                        <option value="__other__">Other</option>
+                                    </optgroup>
+                                    </select>
+                                    <input type="text" name="customCategory" id="expenseCustomCategory" class="form-control mb-2 d-none" placeholder="Enter custom category">
                                 <input type="text" name="description" class="form-control mb-2"
                                     placeholder="Description">
                             </div>
@@ -156,6 +171,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0">Transaction History</h5>
                             <form method="GET" action="/dashboard" class="d-flex gap-2">
+                                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search category or description..." value="<%= search || '' %>">
                                 <select name="month" class="form-select form-select-sm w-auto">
                                     <option value="">All Months</option>
                                     <option value="1" <%= selectedMonth == '1'? 'selected' :'' %>>January</option>
@@ -271,5 +287,4 @@
 
     </div>
 </div>
-
-    <%- include('../partials/footer') %>
+<%- include('../partials/footer') %>

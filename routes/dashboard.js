@@ -34,7 +34,15 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
       values.push(Number(yearQuery));
     }
 
+    const search = req.query.search?.trim();
+    if (search) {
+      const searchIndex = values.length + 1;
+      query += ` AND (category ILIKE $${searchIndex} OR description ILIKE $${searchIndex})`;
+      values.push(`%${search}%`);
+    }
+
     query += ` ORDER BY created_at DESC`;
+    
 
     const result = await pool.query(query, values);
     const transactions = result.rows; //filtered transactions (existed)
@@ -74,7 +82,8 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
       periodLabel = `(${Number(yearQuery)})`;
     } else if (filterType === "month") {
       periodLabel = `(${monthNames[Number(month)]})`;
-    }
+    }    
+
 
     let weather = null;
     try {
@@ -107,6 +116,7 @@ router.get("/dashboard", ensureAuthenticated, async (req, res) => {
       totalExpenseAllTime,
       totalIncomeAllTime,
       balanceAllTime,
+      search,
     });
 
   } catch (err) {
@@ -123,7 +133,17 @@ router.post("/add-income", ensureAuthenticated, async (req, res) => {
     if(!amount || amount <= 0 || isNaN(amount)) {
       return res.status(400).send("Invalid amount. Must be a positive number.");
     }
-    const category = (req.body.category || "").trim().slice(0,100);
+    let category = (req.body.category || "").trim();
+
+    if (category === "__other__") {
+      category = (req.body.customCategory || "").trim();
+    }
+
+    if (!category) {
+      return res.status(400).send("Category is required.");
+    }
+
+    category = category.slice(0, 100);
     const description =(req.body.description || "").trim().slice(0,125);
 
     await pool.query(
@@ -147,7 +167,14 @@ router.post("/add-expense", ensureAuthenticated, async (req, res) => {
     if(!amount || amount <= 0 || isNaN(amount)) {
       return res.status(400).send("Invalid amount. Must be a positive number.");
     }
-    const category = (req.body.category || "").trim().slice(0,100);
+    let category = (req.body.category || "").trim();
+    if (category === "__other__"){
+      category = (req.body.customCategory || "").trim();
+    }
+    if(!category){
+      return res.status(400).send("Category is required.");
+    }
+    category = category.slice(0,100)
     const description =(req.body.description || "").trim().slice(0,125);
 
     await pool.query(

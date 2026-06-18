@@ -8,6 +8,21 @@ function toggleExpense() {
   document.getElementById("incomeForm").classList.add("d-none");
 }
 
+function toggleCustomCategory(type){
+  console.log("Functionrunning");
+  const select = document.getElementById(type + "Category");
+  const custom = document.getElementById(type + "CustomCategory");
+  console.log(select.value)
+  if (select.value === '__other__') {
+    custom.classList.remove("d-none");
+    custom.required = true;
+  } else {
+    custom.classList.add("d-none");
+    custom.required = false;
+    custom.value = "";
+  }
+}
+
 function openEditModal(id, amount, category, description) {
   document.getElementById("editModal").style.display = "flex";
   document.getElementById("editAmount").value = amount;
