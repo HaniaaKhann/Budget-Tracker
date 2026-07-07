@@ -4,11 +4,15 @@ import env from "dotenv";
 import authRoutes from "./routes/auth.js";
 import passport from "./config/passport.js";
 import dashboardRoutes from "./routes/dashboard.js";
+import chatRoutes from "./routes/chat.js";
 
 const app = express();
 const port = 3000;
 app.set("view engine", "ejs");
 env.config();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 app.use(
   session({
@@ -20,11 +24,10 @@ app.use(
     },
   })
 );
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use("/chat", chatRoutes);
 app.get("/", (req, res) => {
   if(req.isAuthenticated()) {
     return res.redirect("/dashboard");
