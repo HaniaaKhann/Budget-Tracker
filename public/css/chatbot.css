@@ -91,6 +91,32 @@
     box-shadow:0 3px 10px rgba(0,0,0,.05);
 }
 
+.bot-message p{
+    margin:0 0 8px;
+}
+
+.bot-message p:last-child{
+    margin-bottom:0;
+}
+
+.bot-message ul{
+    margin:8px 0 0 18px;
+    padding:0;
+}
+
+.bot-message li{
+    margin-bottom:4px;
+}
+
+.bot-message strong{
+    font-weight:600;
+}
+
+.bot-loading{
+    opacity:.7;
+    font-style:italic;
+}
+
 .chat-input{
 
     display:flex;
